@@ -1,0 +1,23 @@
+header {
+    text-align: center;
+    background-color: darkgray;
+}
+
+
+nav {
+    color: whitesmoke;
+}
+
+h1 {
+    color: maroon;
+    font-weight: 700;
+}
+
+h2 {
+    color: maroon;
+    font-weight: 600;
+}
+
+p {
+    font-weight: 500;
+}
