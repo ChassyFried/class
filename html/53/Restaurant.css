@@ -91,6 +91,9 @@ img[src$="png"] {
     border-radius: 10px;
     text-decoration: none;
     padding: .25em;
+    display: inline-block;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .info {
@@ -146,4 +149,27 @@ td:nth-child(7) {
 
 tr:last-of-type td {
     color: red;
+}
+
+.imageLayout {
+    display: flex;
+    gap: 20px;
+}
+
+.leftImage {
+    flex: 1;
+}
+
+.leftImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.rightImages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
 }
