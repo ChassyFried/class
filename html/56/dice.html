@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        display: grid;
+        gap: 1em;
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .dice {
+        width: 80px;
+        height: 80px;
+        background-color: red;
+        display: grid;
+        grid-template:
+            "tl tc tr" 1fr
+            "ml mc mr" 1fr
+            "bl bc br" 1fr/
+            1fr 1fr 1fr;
+    }
+
+    .dot {
+        width: 14px;
+        height: 14px;
+        background-color: black;
+        border-radius: 12px;
+        justify-self: center;
+        align-self: center;
+    }
+
+    .one {
+        grid-area: tl;
+    }
+
+    .two {
+        grid-area: tc;
+    }
+
+    .three {
+        grid-area: tr;
+    }
+
+    .four {
+        grid-area: ml;
+    }
+
+    .five {
+        grid-area: mc;
+    }
+
+    .six {
+        grid-area: mr;
+    }
+
+    .seven {
+        grid-area: bl;
+    }
+
+    .eight {
+        grid-area: bc;
+    }
+
+    .nine {
+        grid-area: br;
+    }
+</style>
+
+<body>
+    <div class="dice">
+        <div class="dot five"></div>
+    </div>
+    </div>
+    <div class="dice">
+        <div class="dot one"></div>
+        <div class="dot nine"></div>
+    </div>
+    </div>
+    <div class="dice">
+        <div class="dot one"></div>
+        <div class="dot five"></div>
+        <div class="dot nine"></div>
+    </div>
+    </div>
+    <div class="dice">
+        <div class="dot one"></div>
+        <div class="dot three"></div>
+        <div class="dot seven"></div>
+        <div class="dot nine"></div>
+    </div>
+    </div>
+    <div class="dice">
+        <div class="dot one"></div>
+        <div class="dot three"></div>
+        <div class="dot five"></div>
+        <div class="dot seven"></div>
+        <div class="dot nine"></div>
+    </div>
+    </div>
+    <div class="dice">
+        <div class="dot one"></div>
+        <div class="dot three"></div>
+        <div class="dot four"></div>
+        <div class="dot six"></div>
+        <div class="dot seven"></div>
+        <div class="dot nine"></div>
+    </div>
+    </div>
+
+</body>
+
+</html>
