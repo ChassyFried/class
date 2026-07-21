@@ -1,0 +1,198 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+header,
+article {
+    margin-left: 70px;
+    margin-right: 70px;
+
+}
+
+.grey {
+    background-color: lightgray;
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 8px;
+
+}
+
+nav,
+footer {
+    background-color: black;
+    position: sticky;
+    top: 0;
+    color: white;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 70px;
+}
+
+footer {
+    position: sticky;
+    bottom: 0;
+}
+
+ul {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0;
+    padding-left: 0;
+
+}
+
+li {
+    list-style: none;
+    display: inline;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+li:first-child {
+    padding-left: 0;
+}
+
+ul a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+h1 {
+    font-size: 2em;
+    text-transform: uppercase;
+}
+
+header .grey {
+    border-radius: 0 0 8px 8px;
+}
+
+.flexgroup h2 {
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+.italics {
+    font-style: italic;
+}
+
+.flexgroup img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.flexgroup video {
+    width: 100%;
+    height: auto;
+}
+
+
+
+.flexgroup p {
+    text-align: justify;
+    width: 100%;
+}
+
+input,
+button {
+
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px black;
+}
+
+form {
+    padding: bottom 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+@media (width > 800px) {
+    .flexbox {
+        display: flex;
+        justify-content: space-around;
+        gap: 1em;
+    }
+
+    .divider {
+        width: 1px;
+        background-color: black;
+    }
+}
+
+@media (width > 1000px) {
+    form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+    }
+}
+
+table {
+    width: 80%;
+    margin: auto;
+}
+
+table,
+td,
+th {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+td {
+    text-align: right;
+}
+
+td:first-child {
+    text-align: center;
+    font-weight: bold;
+}
+
+td:last-child {
+    color: red;
+}
+
+tr:nth-child(odd) {
+    background-color: rgb(209, 224, 245);
+}
+
+th,
+.foot {
+    background-color: white;
+}
+
+tfoot td:first-child {
+    text-align: right;
+}
+
+tr:hover {
+    background-color: blue;
+}
+
+section {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+caption {
+    font-weight: bold;
+    padding-bottom: 10px;
+}
