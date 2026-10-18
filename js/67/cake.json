@@ -1,0 +1,12 @@
+{
+    "name": "cake",
+    "ingredients": [
+        "4 cups flour",
+        "2 cups sugar",
+        "11/2 cups cocoa",
+        "3 eggs",
+        "1 tsp vanilla sugar"
+    ],
+    "directions": "Preheat oven to 350. Mix eggs & sugars until smooth, add flour & cocoa. Bake for 40 minutes.",
+    "image": "cake.jpg"
+}

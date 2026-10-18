@@ -1,0 +1,13 @@
+{
+    "name": "soup",
+    "ingredients": [
+        "3 Potatoes",
+        "1 Onion",
+        "2 Zuchinnis",
+        "2 carrots",
+        "8 cups water",
+        "salt & pepper"
+    ],
+    "directions": "Sautee all vegetables, add water & spices, bring to a boil, lower flame, cover & let cook for 2 hours.",
+    "image": "soup.jpg"
+}

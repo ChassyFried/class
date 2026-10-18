@@ -1,0 +1,19 @@
+{
+    "recipes": [
+        {
+            "id": 1,
+            "name": "soup",
+            "url": "soup.json"
+        },
+        {
+            "id": 2,
+            "name": "poppers",
+            "url": "poppers.json"
+        },
+        {
+            "id": 3,
+            "name": "cake",
+            "url": "cake.json"
+        }
+    ]
+}
