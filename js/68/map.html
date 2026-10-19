@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body,
+        #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #search-form button {
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+
+        #search-panel {
+            position: absolute;
+            top: 5%;
+            left: 12px;
+            transform: none;
+            z-index: 3;
+            width: 360px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px #0003;
+            font-family: Arial, sans-serif;
+        }
+
+        #results-sidebar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 320px;
+            overflow-y: auto;
+            background: white;
+            z-index: 2;
+            padding: 16px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            box-shadow: 2px 0 8px #0003;
+        }
+
+        #results-sidebar h2 {
+            margin-top: 0;
+        }
+
+        .result-item {
+            display: flex;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .result-item:hover {
+            background: #f3f3f3;
+        }
+
+        .result-item img {
+            width: 75px;
+            height: 65px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .result-item h3 {
+            margin: 0 0 6px;
+            font-size: 15px;
+        }
+
+        .result-item p {
+            margin: 0;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="search-panel">
+        <form id="search-form">
+            <input id="search-input" type="search" placeholder="Search Wikipedia places, e.g. yeshiva" value="yeshiva"
+                required />
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <div id="results-sidebar">
+        <h2>Search Results</h2>
+        <div id="results-list"></div>
+    </div>
+    <div id="map"></div>
+    <script>
+        (g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })({
+            key: "AIzaSyB3D-Anos5nKjFwwVy1PxJfDQWHxrVFTiw",
+            v: "weekly",
+            // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).
+            // Add other bootstrap parameters as needed, using camel case.
+        });
+    </script>
+
+    <script src="map.js" type="module"></script>
+</body>
+
+</html>
