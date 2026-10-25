@@ -1,58 +1,30 @@
-
 const GEONAMES_USERNAME = "csoro";
 
-const [{ Map, InfoWindow }, { AdvancedMarkerElement }] = await Promise.all([
+const [
+    { Map, InfoWindow },
+    { AdvancedMarkerElement }
+] = await Promise.all([
     google.maps.importLibrary("maps"),
     google.maps.importLibrary("marker")
 ]);
 
-const bmgLoc = {
-    lat: 40.09543950426593,
-    lng: -74.2221793333354
-};
-
-const pcsLoc = {
-    lat: 40.108884911823516,
-    lng: -74.21764740599487
-};
-
 const map = new Map(document.getElementById("map"), {
-    center: bmgLoc,
-    zoom: 15,
+    zoom: 18,
     renderingType: "VECTOR",
     mapTypeId: "satellite",
     mapId: "DEMO_MAP_ID"
 });
-
-const bmgMarker = new AdvancedMarkerElement({
-    map,
-    position: bmgLoc,
-    title: "BMG"
-});
-
-const pcsMarker = new AdvancedMarkerElement({
-    map,
-    position: pcsLoc,
-    title: "PCS"
-});
-
 const infoWindow = new InfoWindow();
-
-bmgMarker.addListener("click", () => {
-    infoWindow.setContent("info about BMG Yeshiva");
-    infoWindow.open({ anchor: bmgMarker, map });
-});
-
-pcsMarker.addListener("click", () => {
-    infoWindow.setContent("info about PCS");
-    infoWindow.open({ anchor: pcsMarker, map });
-});
 
 const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
 const resultsList = document.getElementById("results-list");
+const resultsCount = document.getElementById("results-count");
+const statusElement = document.getElementById("status");
 
 const geonamesMarkers = [];
+
+let searchRequestId = 0;
 
 function contentForPlace(place) {
     const content = document.createElement("div");
@@ -62,16 +34,23 @@ function contentForPlace(place) {
     content.appendChild(heading);
 
     const summary = document.createElement("p");
-    summary.textContent = place.summary || "No summary available.";
+    summary.textContent =
+        place.summary || "No summary available.";
     content.appendChild(summary);
 
     if (place.wikipediaUrl) {
         const link = document.createElement("a");
 
-        link.href = place.wikipediaUrl.startsWith("http")
-            ? place.wikipediaUrl
-            : `https://${place.lang || "en"}.wikipedia.org/wiki/` +
-            place.wikipediaUrl.split("/").pop();
+        if (/^https?:\/\//i.test(place.wikipediaUrl)) {
+            link.href = place.wikipediaUrl;
+        } else {
+            const articlePath =
+                place.wikipediaUrl.split("/").pop();
+
+            link.href =
+                `https://${place.lang || "en"}.wikipedia.org/wiki/` +
+                articlePath;
+        }
 
         link.textContent = "Read on Wikipedia";
         link.target = "_blank";
@@ -83,18 +62,134 @@ function contentForPlace(place) {
     return content;
 }
 
-searchForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const query = searchInput.value.trim();
-    if (!query) return;
-
+function clearSearchMarkers() {
     geonamesMarkers.forEach(marker => {
         marker.map = null;
     });
 
     geonamesMarkers.length = 0;
+}
+
+function getPosition(place) {
+    if (place.lat == null || place.lng == null) {
+        return null;
+    }
+
+    const lat = Number(place.lat);
+    const lng = Number(place.lng);
+
+    if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng) ||
+        lat < -90 ||
+        lat > 90 ||
+        lng < -180 ||
+        lng > 180
+    ) {
+        return null;
+    }
+
+    return {
+        lat,
+        lng
+    };
+}
+
+function createResultItem(place, position, marker) {
+    const item = document.createElement("div");
+
+    item.className = "result-item";
+    item.tabIndex = 0;
+    item.setAttribute("role", "button");
+
+    const titleText = place.title || "Untitled";
+
+    item.setAttribute(
+        "aria-label",
+        `Show ${titleText} on the map`
+    );
+
+    if (place.thumbnailImg) {
+        const img = document.createElement("img");
+
+        img.src = place.thumbnailImg.replace(
+            /^http:/i,
+            "https:"
+        );
+
+        img.alt = titleText;
+
+        img.onerror = () => {
+            img.style.display = "none";
+        };
+
+        item.appendChild(img);
+    }
+
+    const details = document.createElement("div");
+
+    const title = document.createElement("h3");
+    title.textContent = titleText;
+
+    const summary = document.createElement("p");
+    summary.textContent =
+        place.summary || "No summary available.";
+
+    details.append(title, summary);
+    item.appendChild(details);
+
+    function selectResult() {
+        document
+            .querySelectorAll(".result-item.active")
+            .forEach(element => {
+                element.classList.remove("active");
+            });
+
+        item.classList.add("active");
+
+        map.panTo(position);
+        map.setZoom(15);
+
+        infoWindow.setContent(
+            contentForPlace(place)
+        );
+
+        infoWindow.open({
+            map,
+            anchor: marker
+        });
+    }
+
+    item.addEventListener(
+        "click",
+        selectResult
+    );
+
+    item.addEventListener(
+        "keydown",
+        event => {
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+                event.preventDefault();
+                selectResult();
+            }
+        }
+    );
+
+    return item;
+}
+
+async function searchPlaces(query) {
+    const requestId = ++searchRequestId;
+
+    clearSearchMarkers();
     resultsList.replaceChildren();
+
+    resultsCount.textContent = "Searching...";
+    statusElement.textContent =
+        "Searching GeoNames...";
 
     const params = new URLSearchParams({
         q: query,
@@ -103,119 +198,163 @@ searchForm.addEventListener("submit", async (event) => {
         type: "json"
     });
 
-    const url = `https://secure.geonames.org/wikipediaSearchJSON?${params}`;
+    const url =
+        `https://api.geonames.org/wikipediaSearchJSON?${params}`;
+    console.log("Requesting:", url);
 
     try {
         const response = await fetch(url);
 
+        console.log(
+            "Response:",
+            response.status,
+            response.statusText
+        );
+
         if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
+            throw new Error(
+                `HTTP error: ${response.status}`
+            );
         }
 
         const data = await response.json();
 
+        console.log(
+            "GeoNames response:",
+            data
+        );
+
+        if (requestId !== searchRequestId) {
+            return;
+        }
+
         if (!Array.isArray(data.geonames)) {
             throw new Error(
-                data.status?.message || "Invalid GeoNames response"
+                data.status?.message ||
+                "Invalid GeoNames response"
             );
         }
 
+        const bounds =
+            new google.maps.LatLngBounds();
+
+        let validResults = 0;
+
         data.geonames.forEach(place => {
-            if (place.lat == null || place.lng == null) return;
+            const position =
+                getPosition(place);
 
-            const position = {
-                lat: Number(place.lat),
-                lng: Number(place.lng)
-            };
-
-            if (
-                !Number.isFinite(position.lat) ||
-                !Number.isFinite(position.lng)
-            ) {
+            if (!position) {
                 return;
             }
 
-            const markerOptions = {
-                map,
-                position,
-                title: place.title || "Untitled"
-            };
+            const marker =
+                new AdvancedMarkerElement({
+                    map,
+                    position,
+                    title:
+                        place.title ||
+                        "Untitled"
+                });
 
-            if (place.thumbnailImg) {
-                const img = document.createElement("img");
+            bounds.extend(position);
 
-                img.src = place.thumbnailImg.replace(/^http:/, "https:");
-                img.alt = place.title || "Wikipedia thumbnail";
-                img.style.width = "40px";
-                img.style.height = "40px";
-                img.style.objectFit = "cover";
-                img.style.borderRadius = "50%";
-                img.style.border = "2px solid white";
+            marker.addListener(
+                "click",
+                () => {
+                    infoWindow.setContent(
+                        contentForPlace(place)
+                    );
 
-                img.onerror = () => {
-                    img.style.display = "none";
-                };
+                    infoWindow.open({
+                        map,
+                        anchor: marker
+                    });
 
-                markerOptions.content = img;
-            }
-
-            const marker = new AdvancedMarkerElement(markerOptions);
-
-            marker.addListener("click", () => {
-                infoWindow.setContent(contentForPlace(place));
-                infoWindow.open({ map, anchor: marker });
-            });
+                    document
+                        .querySelectorAll(
+                            ".result-item.active"
+                        )
+                        .forEach(element => {
+                            element.classList.remove(
+                                "active"
+                            );
+                        });
+                }
+            );
 
             geonamesMarkers.push(marker);
 
-            const item = document.createElement("div");
-            item.className = "result-item";
-
-            if (place.thumbnailImg) {
-                const img = document.createElement("img");
-
-                img.src = place.thumbnailImg.replace(/^http:/, "https:");
-                img.alt = place.title || "Article thumbnail";
-
-                img.onerror = () => {
-                    img.style.display = "none";
-                };
-
-                item.appendChild(img);
-            }
-
-            const details = document.createElement("div");
-
-            const title = document.createElement("h3");
-            title.textContent = place.title || "Untitled";
-            details.appendChild(title);
-
-            const summary = document.createElement("p");
-            summary.textContent = place.summary || "No summary available.";
-            details.appendChild(summary);
-
-            item.appendChild(details);
-
-            item.addEventListener("click", () => {
-                map.panTo(position);
-                map.setZoom(15);
-
-                infoWindow.setContent(contentForPlace(place));
-                infoWindow.open({ map, anchor: marker });
-            });
+            const item =
+                createResultItem(
+                    place,
+                    position,
+                    marker
+                );
 
             resultsList.appendChild(item);
+
+            validResults++;
         });
 
-        console.log(`Found ${geonamesMarkers.length} map markers.`);
+        resultsCount.textContent =
+            `${validResults} results with valid coordinates`;
 
-        if (geonamesMarkers.length === 0) {
-            resultsList.textContent = "No results found.";
+        statusElement.textContent =
+            `Created ${validResults} search markers.`;
+
+        if (validResults > 0) {
+            map.fitBounds(
+                bounds,
+                60
+            );
+        } else {
+            resultsList.textContent =
+                "No results with valid coordinates were found.";
         }
-    } catch (error) {
-        console.error("GeoNames search failed:", error);
-        resultsList.textContent = "Search failed. Please try again.";
-    }
-});
 
-searchForm.requestSubmit();
+        console.log(
+            `Created ${validResults} markers.`
+        );
+
+    } catch (error) {
+        if (requestId !== searchRequestId) {
+            return;
+        }
+
+        console.error(
+            "GeoNames search failed:",
+            error
+        );
+
+        resultsCount.textContent =
+            "Search failed";
+
+        statusElement.textContent =
+            error.message ||
+            "Search failed. Please try again.";
+
+        resultsList.textContent =
+            "Unable to load results. Please try again.";
+    }
+}
+
+searchForm.addEventListener(
+    "submit",
+    event => {
+        event.preventDefault();
+
+        const query =
+            searchInput.value.trim();
+
+        if (!query) {
+            return;
+        }
+
+        searchPlaces(query);
+    }
+);
+
+searchPlaces(
+    searchInput.value.trim()
+);
