@@ -146,6 +146,69 @@
                 height: 50px;
             }
         }
+
+        .wiki-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .wiki-marker:hover {
+            transform: scale(1.08);
+            z-index: 10;
+        }
+
+        .wiki-marker img {
+            display: block;
+            width: 52px;
+            height: 52px;
+            box-sizing: border-box;
+            border: 3px solid white;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .wiki-marker-title {
+            max-width: 140px;
+            margin-top: 4px;
+            padding: 2px 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-sizing: border-box;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            font: 600 12px/1.4 Arial, sans-serif;
+            text-align: center;
+        }
+
+        .wiki-marker-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px;
+            min-height: 40px;
+            padding: 6px;
+            box-sizing: border-box;
+            border: 2px solid white;
+            border-radius: 8px;
+            background: #555;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .wiki-marker-fallback .wiki-marker-title {
+            max-width: 140px;
+            margin: 0;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            background: transparent;
+            text-shadow: none;
+        }
     </style>
 </head>
 
