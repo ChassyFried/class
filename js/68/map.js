@@ -1,26 +1,30 @@
+
 const GEONAMES_USERNAME = "csoro";
 
 const [
-    { Map, InfoWindow},
+    { Map, InfoWindow },
     { AdvancedMarkerElement }
 ] = await Promise.all([
     google.maps.importLibrary("maps"),
     google.maps.importLibrary("marker")
 ]);
-
+let savedPlaces = JSON.parse(localStorage.getItem("savedPlaces")) || [];
 const map = new Map(document.getElementById("map"), {
     zoom: 18,
+    minZoom: 2,
+    center: { lat: 51.5072, lng: -0.1276 },
     renderingType: "VECTOR",
     mapTypeId: "satellite",
     mapId: "DEMO_MAP_ID"
 });
+
 const infoWindow = new InfoWindow();
 
 const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
 const resultsList = document.getElementById("results-list");
-const resultsCount = document.getElementById("results-count");
-const statusElement = document.getElementById("status");
+const clearButton = document.getElementById("clear");
+
 
 const geonamesMarkers = [];
 
@@ -52,7 +56,7 @@ function contentForPlace(place) {
                 articlePath;
         }
 
-        link.textContent = "Read on Wikipedia";
+        link.textContent = "Read More";
         link.target = "_blank";
         link.rel = "noopener noreferrer";
 
@@ -78,36 +82,19 @@ function getPosition(place) {
     const lat = Number(place.lat);
     const lng = Number(place.lng);
 
-    if (
-        !Number.isFinite(lat) ||
-        !Number.isFinite(lng) ||
-        lat < -90 ||
-        lat > 90 ||
-        lng < -180 ||
-        lng > 180
-    ) {
-        return null;
-    }
 
-    return {
-        lat,
-        lng
-    };
+    return { lat, lng };
 }
 
 function createResultItem(place, position, marker) {
     const item = document.createElement("div");
 
     item.className = "result-item";
-    item.tabIndex = 0;
-    item.setAttribute("role", "button");
 
-    const titleText = place.title || "Untitled";
 
-    item.setAttribute(
-        "aria-label",
-        `Show ${titleText} on the map`
-    );
+    const titleText = place.title;
+
+
 
     if (place.thumbnailImg) {
         const img = document.createElement("img");
@@ -150,9 +137,7 @@ function createResultItem(place, position, marker) {
         map.panTo(position);
         map.setZoom(15);
 
-        infoWindow.setContent(
-            contentForPlace(place)
-        );
+        infoWindow.setContent(contentForPlace(place));
 
         infoWindow.open({
             map,
@@ -160,23 +145,17 @@ function createResultItem(place, position, marker) {
         });
     }
 
-    item.addEventListener(
-        "click",
-        selectResult
-    );
+    item.addEventListener("click", selectResult);
 
-    item.addEventListener(
-        "keydown",
-        event => {
-            if (
-                event.key === "Enter" ||
-                event.key === " "
-            ) {
-                event.preventDefault();
-                selectResult();
-            }
+    item.addEventListener("keydown", event => {
+        if (
+            event.key === "Enter" ||
+            event.key === " "
+        ) {
+            event.preventDefault();
+            selectResult();
         }
-    );
+    });
 
     return item;
 }
@@ -184,32 +163,18 @@ function createResultItem(place, position, marker) {
 async function searchPlaces(query) {
     const requestId = ++searchRequestId;
 
-    clearSearchMarkers();
-    resultsList.replaceChildren();
-
-    resultsCount.textContent = "Searching...";
-    statusElement.textContent =
-        "Searching GeoNames...";
 
     const params = new URLSearchParams({
         q: query,
-        maxRows: "10",
-        username: GEONAMES_USERNAME,
-        type: "json"
+        maxRows: "100",
+        username: GEONAMES_USERNAME
     });
 
     const url =
-        `https://api.geonames.org/wikipediaSearchJSON?${params}`;
-    console.log("Requesting:", url);
+        `https://secure.geonames.org/wikipediaSearchJSON?${params.toString()}`;
 
     try {
         const response = await fetch(url);
-
-        console.log(
-            "Response:",
-            response.status,
-            response.statusText
-        );
 
         if (!response.ok) {
             throw new Error(
@@ -219,116 +184,57 @@ async function searchPlaces(query) {
 
         const data = await response.json();
 
-        console.log(
-            "GeoNames response:",
-            data
-        );
-
         if (requestId !== searchRequestId) {
             return;
         }
 
-        if (!Array.isArray(data.geonames)) {
+        if (data.status) {
             throw new Error(
-                data.status?.message ||
-                "Invalid GeoNames response"
+                data.status.message || "GeoNames error"
             );
         }
 
-        const bounds =
-            new google.maps.LatLngBounds();
+        if (!Array.isArray(data.geonames)) {
+            throw new Error("Invalid GeoNames response");
+        }
+        savedPlaces.push(...data.geonames);
+        localStorage.setItem("savedPlaces", JSON.stringify(savedPlaces));
+
+        const bounds = new google.maps.LatLngBounds();
 
         let validResults = 0;
 
         data.geonames.forEach(place => {
-            const position =
-                getPosition(place);
+            const position = getPosition(place);
+            if (!position) return;
 
-            if (!position) {
-                return;
-            }
-
-            const marker =
-                new AdvancedMarkerElement({
-                    map,
-                    position,
-                    title:
-                        place.title ||
-                        "Untitled"
-                });
-
-            bounds.extend(position);
-
-            marker.addListener(
-                "click",
-                () => {
-                    infoWindow.setContent(
-                        contentForPlace(place)
-                    );
-
-                    infoWindow.open({
-                        map,
-                        anchor: marker
-                    });
-
-                    document
-                        .querySelectorAll(
-                            ".result-item.active"
-                        )
-                        .forEach(element => {
-                            element.classList.remove(
-                                "active"
-                            );
-                        });
-                }
-            );
-
+            const marker = createMarker(place, position);
             geonamesMarkers.push(marker);
 
-            const item =
-                createResultItem(
-                    place,
-                    position,
-                    marker
-                );
-
+            const item = createResultItem(place, position, marker);
             resultsList.appendChild(item);
 
+            bounds.extend(position);
             validResults++;
         });
 
-        resultsCount.textContent =
-            `${validResults} results with valid coordinates`;
-
-        statusElement.textContent =
-            `Created ${validResults} search markers.`;
-
         if (validResults > 0) {
-            map.fitBounds(
-                bounds,
-                60
-            );
+            map.fitBounds(bounds, 60);
         } else {
             resultsList.textContent =
                 "No results with valid coordinates were found.";
         }
 
-        console.log(
-            `Created ${validResults} markers.`
-        );
+
 
     } catch (error) {
         if (requestId !== searchRequestId) {
             return;
         }
 
-        console.error(
-            "GeoNames search failed:",
-            error
-        );
+        console.error("GeoNames search failed:", error);
 
-        resultsCount.textContent =
-            "Search failed";
+        resultsCount.textContent = "Search failed";
 
         statusElement.textContent =
             error.message ||
@@ -339,22 +245,60 @@ async function searchPlaces(query) {
     }
 }
 
-searchForm.addEventListener(
-    "submit",
-    event => {
-        event.preventDefault();
+searchForm.addEventListener("submit", event => {
+    event.preventDefault();
 
-        const query =
-            searchInput.value.trim();
+    const query = searchInput.value.trim();
 
-        if (!query) {
-            return;
-        }
-
-        searchPlaces(query);
+    if (!query) {
+        return;
     }
-);
 
-searchPlaces(
-    searchInput.value.trim()
-);
+    searchPlaces(query);
+});
+
+if (searchInput.value.trim()) {
+    searchPlaces(searchInput.value.trim());
+}
+function createMarker(place, position) {
+    const marker = new AdvancedMarkerElement({
+        map: map,
+        position: position,
+        title: place.title
+    });
+
+    marker.addListener("click", () => {
+        infoWindow.setContent(contentForPlace(place));
+        infoWindow.open({ map, anchor: marker });
+    });
+
+    return marker;
+}
+function loadPrevious() {
+    const bounds = new google.maps.LatLngBounds();
+
+    savedPlaces.forEach(place => {
+        const position = getPosition(place);
+        if (!position) return;
+
+        const marker = createMarker(place, position);
+        geonamesMarkers.push(marker);
+
+        const item = createResultItem(place, position, marker);
+        resultsList.appendChild(item);
+
+        bounds.extend(position);
+    });
+
+    if (geonamesMarkers.length > 0) {
+        map.fitBounds(bounds);
+    }
+}
+loadPrevious();
+clearButton.addEventListener("click", () => {
+    savedPlaces = [];
+    localStorage.removeItem("savedPlaces");
+    clearSearchMarkers();
+    resultsList.replaceChildren();
+    infoWindow.close();
+});
