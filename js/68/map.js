@@ -1,7 +1,7 @@
 const GEONAMES_USERNAME = "csoro";
 
 const [
-    { Map, InfoWindow },
+    { Map, InfoWindow},
     { AdvancedMarkerElement }
 ] = await Promise.all([
     google.maps.importLibrary("maps"),
