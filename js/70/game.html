@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr Potato Head</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        .potato {
+            display: flex;
+            min-height: calc(100vh - 100px);
+            align-items: flex-start;
+        }
+
+        .potato-column:first-child {
+            flex: 2;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            min-width: 0;
+        }
+
+        .potato-area {
+            position: relative;
+            width: 600px;
+            flex-shrink: 0;
+        }
+
+        .potato-image {
+            width: 600px;
+            max-width: none;
+            height: auto;
+            display: block;
+        }
+
+        .potato-column:last-child {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            min-width: 180px;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .categories button {
+            width: 80px;
+            height: 60px;
+            text-align: center;
+            background-color: #3b7fbc;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 6px;
+
+        }
+
+        .categories button.active {
+            background-color: red;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        #choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        #choices img {
+            width: 100px;
+            height: auto;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .choice {
+            user-select: none;
+            -webkit-user-drag: none;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .placed-part {
+            position: absolute;
+            z-index: 10;
+            width: 100px;
+            max-width: none;
+            height: auto;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        @media (max-width: 900px) {
+            .potato {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .potato-column:first-child {
+                width: 100%;
+                box-sizing: border-box;
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+
+            .potato-column:last-child {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        .popups {
+            background-color: aliceblue;
+            border: 3px solid black;
+            width: 500px;
+            height: 200px;
+            text-align: center;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #settingButtons {
+            text-align: center;
+        }
+
+        #settingButtons button {
+            text-align: center;
+            background-color: #3b7fbc;
+            color: white;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Mr Potato Head</h2>
+
+    <div id="settingButtons">
+        <button id="openBgrnd">Choose Your Background</button>
+        <button id="openMusic">Choose Your Music</button>
+        <button id="save">Save your Creation</button>
+        <button id="view">View your Creations</button>
+
+    </div>
+
+    <div class="popups backgroundPopup">
+        <h2>Choose your background color</h2>
+        <input type="color">
+        <button id="chooseButton">Choose</button>
+    </div>
+    <div class="popups musicPopup">
+        <h2>Choose your Music</h2>
+        <button id="slow">Slow Music</button>
+        <button id="fast">Fast Music</button>
+    </div>
+    <audio id="fastSong" loop>
+        <source src="songs/fastSong.mp3">
+    </audio>
+    <audio id="slowSong" loop>
+        <source src="songs/slowSong.mp3">
+    </audio>
+    <div class="potato">
+
+        <div class="potato-column">
+            <div class="potato-area">
+                <img src="images/potato.png" alt="Potato" class="potato-image">
+            </div>
+        </div>
+
+        <div class="potato-column">
+
+            <h3>Choose Potato Parts</h3>
+
+            <div class="categories">
+                <button id="eyesBtn">Eyes</button>
+                <button id="nosesBtn">Noses</button>
+                <button id="mouthsBtn">Mouths</button>
+                <button id="accessoriessBtn">Hats</button>
+            </div>
+
+            <div id="choices"></div>
+
+        </div>
+
+    </div>
+
+    <script src="game.js" type="module"></script>
+
+</body>
+
+</html>
