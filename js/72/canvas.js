@@ -13,6 +13,18 @@ clearButton.addEventListener('click', () => {
     balls.length = 0;
 });
 
+chooseButton.addEventListener('click', () => {
+    const radius = Number(sizeInput.value);
+    const color = colorPicker.value;
+    const x = radius + Math.random() * (theCanvas.width - radius * 2);
+    const y = radius + Math.random() * (theCanvas.height - radius * 2);
+
+    const ball = new Ball(x, y, radius, color);
+    balls.push(ball);
+
+}
+);
+
 function sizeCanvas() {
     theCanvas.width = window.innerWidth;
     theCanvas.height = window.innerHeight -
@@ -42,46 +54,44 @@ function sizeCanvas() {
 sizeCanvas();
 window.addEventListener('resize', sizeCanvas);
 
-chooseButton.addEventListener('click', () => {
-
-    const radius = Number(sizeInput.value);
-    const color = colorPicker.value;
-
-    const ball = {
-        x: radius + Math.random() * (theCanvas.width - radius * 2),
-        y: radius + Math.random() * (theCanvas.height - radius * 2),
-        radius: radius,
-        color: color,
-        dx: 1,
-        dy: 2
-    };
-
-    balls.push(ball);
-});
 
 function bounce() {
     context.clearRect(0, 0, theCanvas.width, theCanvas.height);
 
     balls.forEach(ball => {
-
-        ball.x += ball.dx;
-        ball.y += ball.dy;
-
-        if (ball.x < ball.radius ||
-            ball.x > theCanvas.width - ball.radius) {
-            ball.dx = -ball.dx;
-        }
-
-        if (ball.y < ball.radius ||
-            ball.y > theCanvas.height - ball.radius) {
-            ball.dy = -ball.dy;
-        }
-
-        context.fillStyle = ball.color;
-        context.beginPath();
-        context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-        context.fill();
+        ball.move();
+        ball.draw();
     });
 }
 
 setInterval(bounce, 10);
+
+class Ball {
+    constructor(x, y, radius, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.color = color;
+        this.dx = 1;
+        this.dy = 2;
+    }
+    move() {
+        this.x += this.dx;
+        this.y += this.dy;
+        if (this.x < this.radius ||
+            this.x > theCanvas.width - this.radius) {
+            this.dx = -this.dx;
+        }
+
+        if (this.y < this.radius ||
+            this.y > theCanvas.height - this.radius) {
+            this.dy = -this.dy;
+        }
+    }
+    draw() {
+        context.fillStyle = this.color;
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        context.fill();
+    }
+}
