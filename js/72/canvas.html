@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Settings</title>
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #theCanvas {
+            display: block;
+        }
+
+        .settings {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .color,
+        .size {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2 {
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #3b7fbc;
+            color: white;
+            font-weight: 500;
+            border-radius: 7px;
+            padding: 5px 10px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="settings">
+        <div class="color">
+            <h2>Choose color</h2>
+            <input type="color" id="colorPicker">
+        </div>
+
+        <div class="size">
+            <h2>Choose your Size</h2>
+            <input type="number" id="sizeInput" min="1" max="100" value="10">
+            <button id="choose">Set</button>
+        </div>
+        <div class="clear">
+            <button class="clearCanvas">Clear Canvas</button>
+        </div>
+    </div>
+
+    <canvas id="theCanvas" width="1000" height="500"></canvas>
+
+    <script src="canvas.js" type="module"></script>
+</body>
+
+</html>
