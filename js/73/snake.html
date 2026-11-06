@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #theCanvas {
+            display: block;
+            border: 1px solid black;
+        }
+
+        #hitWall {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            background-color: black;
+            color: red;
+            border: 2px solid red;
+            border-radius: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+            padding: 20px 40px;
+
+        }
+
+        #hitWall button {
+            background-color: white;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="theCanvas"></canvas>
+
+    <div id="hitWall">
+        <h2>Game over!</h2>
+        <h2>You hit the wall!</h2>
+        <button id=restart>Try Again</button>
+    </div>
+
+    <script src="snake.js" type="module"></script>
+</body>
+
+</html>
