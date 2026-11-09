@@ -1,4 +1,4 @@
-import './style.css';
+console.log("JavaScript is working!");
 
 const eyes = document.querySelector("#eyesBtn");
 const noses = document.querySelector("#nosesBtn");
