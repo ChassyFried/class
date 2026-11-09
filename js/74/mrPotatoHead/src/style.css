@@ -1,0 +1,149 @@
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 20px;
+    }
+
+    .potato {
+      display: flex;
+      min-height: calc(100vh - 100px);
+      align-items: flex-start;
+    }
+
+    .potato-column:first-child {
+      flex: 2;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      min-width: 0;
+    }
+
+    .potato-area {
+      position: relative;
+      width: 600px;
+      flex-shrink: 0;
+    }
+
+    .potato-image {
+      width: 600px;
+      max-width: none;
+      height: auto;
+      display: block;
+    }
+
+    .potato-column:last-child {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 20px;
+      min-width: 180px;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .categories button {
+      width: 80px;
+      height: 60px;
+      text-align: center;
+      background-color: #3b7fbc;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 6px;
+
+    }
+
+    .categories button.active {
+      background-color: red;
+    }
+
+    button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    #choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    #choices img {
+      width: 100px;
+      height: auto;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .choice {
+      user-select: none;
+      -webkit-user-drag: none;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .placed-part {
+      position: absolute;
+      z-index: 10;
+      width: 100px;
+      max-width: none;
+      height: auto;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    @media (max-width: 900px) {
+      .potato {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .potato-column:first-child {
+        width: 100%;
+        box-sizing: border-box;
+        overflow-x: auto;
+        justify-content: flex-start;
+      }
+
+      .potato-column:last-child {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+    .popups {
+      background-color: aliceblue;
+      border: 3px solid black;
+      width: 500px;
+      height: 200px;
+      text-align: center;
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #settingButtons {
+      text-align: center;
+    }
+
+    #settingButtons button {
+      text-align: center;
+      background-color: #3b7fbc;
+      color: white;
+      font-weight: 500;
+    }

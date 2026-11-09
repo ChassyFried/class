@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mr Potato Head</title>
+
+</head>
+
+<body>
+
+  <h2>Mr Potato Head</h2>
+
+  <div id="settingButtons">
+    <button id="openBgrnd">Choose Your Background</button>
+    <button id="openMusic">Choose Your Music</button>
+    <button id="save">Save your Creation</button>
+    <button id="view">View your Creations</button>
+
+  </div>
+
+  <div class="popups backgroundPopup">
+    <h2>Choose your background color</h2>
+    <input type="color">
+    <button id="chooseButton">Choose</button>
+  </div>
+  <div class="popups musicPopup">
+    <h2>Choose your Music</h2>
+    <button id="slow">Slow Music</button>
+    <button id="fast">Fast Music</button>
+  </div>
+  <audio id="fastSong" loop>
+    <source src="public/songs/fastSong.mp3">
+  </audio>
+  <audio id="slowSong" loop>
+    <source src="public/songs/slowSong.mp3">
+  </audio>
+  <div class="potato">
+
+    <div class="potato-column">
+      <div class="potato-area">
+        <img src="public/images/potato.png" alt="Potato" class="potato-image">
+      </div>
+    </div>
+
+    <div class="potato-column">
+
+      <h3>Choose Potato Parts</h3>
+
+      <div class="categories">
+        <button id="eyesBtn">Eyes</button>
+        <button id="nosesBtn">Noses</button>
+        <button id="mouthsBtn">Mouths</button>
+        <button id="accessoriessBtn">Hats</button>
+      </div>
+
+      <div id="choices"></div>
+
+    </div>
+
+  </div>
+
+  <script src="src/main.js" type="module"></script>
+
+</body>
+
+</html>
