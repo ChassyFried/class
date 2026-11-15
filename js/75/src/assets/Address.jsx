@@ -1,5 +1,6 @@
-export default function Address(props) {
+export default function Address({ street, city, country, zip }) {
+
     return <h2>
-    {props.street} {props.city}, {props.state} {props.zip}
+        {street} {city}, {country} {zip}
     </h2>;
 }

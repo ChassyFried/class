@@ -17,7 +17,9 @@ function App() {
       <h1>
         Hello {person.first} {person.last} !!
       </h1>
-      <Address street="123 Main Street" city="Orlando" state="Florida" zip="11145" />
+      <Address street="Shaul Hamelech 37" city="Jerusalem" country="Israel" zip="9993537" />
+      <Address street="1491 E 33rd" city="Brooklyn" country="NY" zip="11234" />
+
     </>
   );
 }
