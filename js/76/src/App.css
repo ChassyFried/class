@@ -1,0 +1,17 @@
+#zip {
+  display: block;
+  margin-left: auto;
+}
+
+#icon {
+  width: 200px;
+  margin: auto;
+}
+
+#error {
+  color: red;
+}
+
+.noWeather {
+  font-size: 30px;
+}
